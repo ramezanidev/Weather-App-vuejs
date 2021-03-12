@@ -1,26 +1,29 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Welcome to Your Vue.js App" />
+  <Panel />
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
-
+import Panel from "./components/panel";
 export default {
   name: "App",
   components: {
-    HelloWorld
+    Panel
   }
 };
 </script>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style>
+@import url("https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.css");
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+html,
+body {
+  width: 100%;
+  height: 100%;
 }
 </style>
