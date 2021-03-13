@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@aicdev/snowflakejs": "^0.0.3",
+    "chart": "^0.1.2",
+    "chart.js": "^2.9.4",
     "easy-circular-progress": "^1.0.4",
     "ui-progress-circle": "^1.1.0",
     "v-circle": "^0.1.3",

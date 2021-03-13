@@ -154,12 +154,15 @@ export default {
   border-radius: 5px;
   backdrop-filter: blur(1px);
   padding: 10px;
+  display: flex;
 }
 @media (max-width: 768px) {
   .Weather {
     width: 100%;
     margin: 0;
     height: 100%;
+    overflow: scroll;
+    display: block;
   }
 }
 </style>

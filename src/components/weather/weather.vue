@@ -65,7 +65,6 @@
           </span>
         </div>
       </div>
-
       <div class="wind">
         <div class="turbines">
           <div class="turbine">
@@ -92,11 +91,11 @@
         <div class="wind-table">
           <span>
             <span>Speed:</span>
-            <span>{{ data.wind.speed || 0  }}Km/h</span>
+            <span>{{ data.wind.speed || 0 }}Km/h</span>
           </span>
           <span>
             <span>deg:</span>
-            <span>{{ data.wind.deg || 0  }}&#xb0;</span>
+            <span>{{ data.wind.deg || 0 }}&#xb0;</span>
           </span>
           <span style="border-bottom: none">
             <span>gust:</span>
@@ -108,7 +107,7 @@
               <div
                 class="compass-inline"
                 :style="{
-                  transform: `translate(-50%, -50%) rotate(${data.wind.deg}deg)`,
+                  transform: `translate(-50%, -50%) rotate(${data.wind.deg}deg)`
                 }"
               >
                 <div></div>
@@ -116,7 +115,9 @@
               </div>
             </div>
             <img
-              :src="`http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`"
+              :src="
+                `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
+              "
             />
           </div>
         </div>
@@ -129,40 +130,61 @@
       <div class="sunTime">
         <div>
           <span>{{
-            sunset.getHours().toString().padStart(2, "0") +
-            ":" +
-            sunset.getMinutes().toString().padStart(2, "0")
+            sunset
+              .getHours()
+              .toString()
+              .padStart(2, "0") +
+              ":" +
+              sunset
+                .getMinutes()
+                .toString()
+                .padStart(2, "0")
           }}</span>
           <span>{{
-            sunrise.getHours().toString().padStart(2, "0") +
-            ":" +
-            sunrise.getMinutes().toString().padStart(2, "0")
+            sunrise
+              .getHours()
+              .toString()
+              .padStart(2, "0") +
+              ":" +
+              sunrise
+                .getMinutes()
+                .toString()
+                .padStart(2, "0")
           }}</span>
         </div>
       </div>
     </div>
+    <main>
+      <div class="chart">
+        <chartWeather :tempList="tempList" :dateList="dateList" />
+      </div>
+    </main>
   </div>
 </template>
 
 <script>
+import chartWeather from "./chart.vue";
+
 export default {
-  components: {},
+  components: {
+    chartWeather
+  },
   computed: {
-    sunset: function () {
+    sunset: function() {
       return new Date(
         this.data.sys.sunset * 1000 +
           new Date().getTimezoneOffset() * 60000 +
           this.data.timezone * 1000
       );
     },
-    sunrise: function () {
+    sunrise: function() {
       return new Date(
         this.data.sys.sunrise * 1000 +
           new Date().getTimezoneOffset() * 60000 +
           this.data.timezone * 1000
       );
     },
-    isDay: function () {
+    isDay: function() {
       let now = new Date();
       let utc_timestamp = new Date(
         now.getUTCFullYear(),
@@ -185,15 +207,21 @@ export default {
       console.log(TimeZone);
       return a > b;
     },
-    updateDate: function () {
+    updateDate: function() {
       let time = new Date(this.data.dt * 1000);
       return (
-        time.getHours().toString().padStart(2, "0") +
+        time
+          .getHours()
+          .toString()
+          .padStart(2, "0") +
         ":" +
-        time.getMinutes().toString().padStart(2, "0")
+        time
+          .getMinutes()
+          .toString()
+          .padStart(2, "0")
       );
     },
-    timezone: function () {
+    timezone: function() {
       return (
         Math.floor(this.data.timezone / 3600)
           .toString()
@@ -202,52 +230,42 @@ export default {
         ((this.data.timezone % 3600) / 60).toString().padStart(2, "0")
       );
     },
-    weather: function () {
-      const weather = ["clear"];
-      let status;
-      let w = this.data.weather[0].description.toLowerCase();
-      for (let i = 0; i < weather.length; i++) {
-        if (w.includes(weather[i])) {
-          status = weather[i];
-          break;
-        }
-      }
-      return status;
-    },
   },
   data() {
     return {
       token: "49f01e8b459085de2580f891869cdbe4",
       city: "khoy",
+      tempList:'',
+      dateList:'',
       data: {
-        clouds: { all: 19 },
+        clouds: { all: 0 },
         dt: 1615215600,
-        dt_txt: "2021-03-08 15:00:00",
+        dt_txt: "0",
         main: {
           feels_like: 278.53,
-          grnd_level: 881,
-          humidity: 10,
-          pressure: 1009,
-          sea_level: 1009,
-          temp: 281.99,
-          temp_kf: 1.27,
-          temp_max: 281.99,
-          temp_min: 28000.72,
+          grnd_level: 0,
+          humidity: 0,
+          pressure: 0,
+          sea_level: 0,
+          temp: 0,
+          temp_kf: 0,
+          temp_max: 0,
+          temp_min: 0
         },
-        pop: 0.28,
+        pop: 0,
         pod: "n",
-        sys: { sunset: 10 },
-        visibility: 10000,
+        sys: { sunset: 0 },
+        visibility: 0,
         weather: [
-          { id: 801, main: "Clouds", description: "few clouds", icon: "02n" },
+          { id: 1, main: "Clouds", description: "few clouds", icon: "02n" }
         ],
-        0: { id: 801, main: "Clouds", description: "few clouds", icon: "02n" },
-        wind: { speed: 2.11, deg: 255 },
-      },
+        0: { id: 1, main: "Clouds", description: "few clouds", icon: "02n" },
+        wind: { speed: 1, deg: 2 }
+      }
     };
   },
   methods: {
-    setProgress: function () {
+    setProgress: function() {
       const circle = this.$refs.circle;
       const radius = circle.r.baseVal.value;
       const circumference = radius * 2 * Math.PI;
@@ -298,13 +316,13 @@ export default {
         this.$refs.Skycondition.style.transform = `translate(-50%, 0) rotate(${-d}deg)`;
       }
     },
-    loadData: function () {
+    loadData: function() {
       this.$emit("loading-start");
       fetch(
         `http://api.openweathermap.org/data/2.5/weather?q=${this.city}&appid=${this.token}`
       )
-        .then((response) => response.json())
-        .then((data) => {
+        .then(response => response.json())
+        .then(data => {
           this.data = data;
           console.log(this.data);
           this.$emit("isDay", this.isDay);
@@ -312,11 +330,31 @@ export default {
           this.$emit("status-weather", this.data.weather[0].main);
           this.setProgress();
         });
-    },
+
+
+      fetch(
+        `http://api.openweathermap.org/data/2.5/forecast?q=${this.city}&appid=${this.token}`
+      )
+        .then(response => response.json())
+        .then(data => {
+          let temp = []
+          let date = []
+          console.log(data);
+          data.list.forEach(e => temp.push(Math.round(e.main.temp - 273)));
+          data.list.forEach(e => date.push(e.dt_txt.slice(5,16).replace('-','/')));
+          this.tempList = temp
+          this.dateList = date
+        });
+
+
+
+
+
+    }
   },
   mounted() {
     this.loadData();
-  },
+  }
 };
 </script>
 
@@ -325,8 +363,25 @@ export default {
   font-family: "Vazir";
   width: 270px;
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  display: block;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  scrollbar-color: #08080800 #fff0;
+  scrollbar-width: thin;
+}
+.temp-box:hover {
+  scrollbar-color: #46597500 #fff0;
+}
+.temp-box:hover::-webkit-scrollbar-thumb {
+  background-color: #0f6ffe00;
+}
+.temp-box::-webkit-scrollbar {
+  width: 3px;
+  background-color: transparent;
+}
+.temp-box::-webkit-scrollbar-thumb {
+  background-color: #00000000;
 }
 .temp {
   width: 100%;
@@ -633,7 +688,6 @@ export default {
     transform: translate(-50%, -50%);
   }
 }
-
 .Skycondition {
   width: 100%;
   box-shadow: inset 0px -11px 20px -18px #000;
@@ -685,6 +739,38 @@ export default {
       right: 0;
       transform: translate(50%, 0);
     }
+  }
+}
+main {
+    display: flex;
+    flex: auto;
+    padding-left: 6px;
+    .chart{
+      width: 100%;
+      height: 255px;
+    }
+}
+
+@media (max-width: 768px) {
+  main{
+    margin-top: 30px;
+    padding-left: 0;
+  }
+  .temp-box {
+    height: auto;
+    padding-right: 0;
+  }
+  .tool-bar{
+    margin: 5px 0;
+  }
+  .temp{
+    height: 260px;
+  }
+  .wind{
+    margin-top:10px;
+  }
+  .Skycondition{
+    margin-top: 50px
   }
 }
 </style>
