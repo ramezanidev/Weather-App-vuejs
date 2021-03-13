@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'cloud-cover' : isDay}">
+  <div :class="{ 'cloud-cover': isDay }">
     <div v-if="isDay" class="clouds-cloud"></div>
 
     <div v-if="!isDay" class="stars"></div>
@@ -11,7 +11,7 @@
 <script>
 export default {
   name: "cloud",
-  props:['isDay']
+  props: ["isDay"]
 };
 </script>
 
@@ -120,11 +120,11 @@ export default {
     background-position: 10000px 0;
   }
 }
-.cloud-cover{
-    width: 100%;
-    height: 100%;
-    filter: brightness(0.7);
-    background: linear-gradient(to top, #0216d9 0, #010daa 27%, #0070df 100%);
+.cloud-cover {
+  width: 100%;
+  height: 100%;
+  filter: brightness(0.7);
+  background: linear-gradient(to top, #0216d9 0, #010daa 27%, #0070df 100%);
 }
 .clouds-cloud {
   top: 0;
@@ -148,9 +148,9 @@ export default {
   -moz-animation: move-clouds-back 700s linear infinite;
   -webkit-animation: move-clouds-back 700s linear infinite;
 }
-@media (max-width:768px){
-  .clouds-cloud{
-      background-size: cover;
+@media (max-width: 768px) {
+  .clouds-cloud {
+    background-size: cover;
   }
 }
 </style>

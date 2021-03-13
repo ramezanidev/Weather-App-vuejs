@@ -92,15 +92,15 @@
         <div class="wind-table">
           <span>
             <span>Speed:</span>
-            <span>{{ data.wind.speed }}Km/h</span>
+            <span>{{ data.wind.speed || 0  }}Km/h</span>
           </span>
           <span>
             <span>deg:</span>
-            <span>{{ data.wind.deg }}&#xb0;</span>
+            <span>{{ data.wind.deg || 0  }}&#xb0;</span>
           </span>
           <span style="border-bottom: none">
             <span>gust:</span>
-            <span>{{ data.wind.gust }}Km/h</span>
+            <span>{{ data.wind.gust || 0 }}Km/h</span>
           </span>
           <div>
             <div class="compass">
@@ -121,6 +121,25 @@
           </div>
         </div>
       </div>
+      <div class="Skycondition">
+        <div class="Circle" ref="Skycondition">
+          <img class="sun" src="/img/icon/sun.svg" />
+        </div>
+      </div>
+      <div class="sunTime">
+        <div>
+          <span>{{
+            sunset.getHours().toString().padStart(2, "0") +
+            ":" +
+            sunset.getMinutes().toString().padStart(2, "0")
+          }}</span>
+          <span>{{
+            sunrise.getHours().toString().padStart(2, "0") +
+            ":" +
+            sunrise.getMinutes().toString().padStart(2, "0")
+          }}</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -129,12 +148,42 @@
 export default {
   components: {},
   computed: {
-    isDay: function (){
+    sunset: function () {
+      return new Date(
+        this.data.sys.sunset * 1000 +
+          new Date().getTimezoneOffset() * 60000 +
+          this.data.timezone * 1000
+      );
+    },
+    sunrise: function () {
+      return new Date(
+        this.data.sys.sunrise * 1000 +
+          new Date().getTimezoneOffset() * 60000 +
+          this.data.timezone * 1000
+      );
+    },
+    isDay: function () {
       let now = new Date();
-      let utc_timestamp = new Date(now.getUTCFullYear(),now.getUTCMonth(), now.getUTCDate() , 
-      now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds());
-      let TimeZone = new Date(utc_timestamp.getTime() + (this.data.timezone * 1000));
-      return (this.data.sys.sunset * 1000 > TimeZone.getTime())
+      let utc_timestamp = new Date(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        now.getUTCHours(),
+        now.getUTCMinutes(),
+        now.getUTCSeconds(),
+        now.getUTCMilliseconds()
+      );
+      let TimeZone = new Date(
+        utc_timestamp.getTime() + this.data.timezone * 1000
+      );
+      let a = new Date(
+        this.data.sys.sunset * 1000 +
+          new Date().getTimezoneOffset() * 60000 +
+          this.data.timezone * 1000
+      ).getTime();
+      let b = TimeZone.getTime();
+      console.log(TimeZone);
+      return a > b;
     },
     updateDate: function () {
       let time = new Date(this.data.dt * 1000);
@@ -145,7 +194,12 @@ export default {
       );
     },
     timezone: function () {
-      return (Math.floor(this.data.timezone / 3600).toString().padStart(2, "0") + ":" + ((this.data.timezone % 3600) / 60).toString().padStart(2, "0")
+      return (
+        Math.floor(this.data.timezone / 3600)
+          .toString()
+          .padStart(2, "0") +
+        ":" +
+        ((this.data.timezone % 3600) / 60).toString().padStart(2, "0")
       );
     },
     weather: function () {
@@ -164,7 +218,7 @@ export default {
   data() {
     return {
       token: "49f01e8b459085de2580f891869cdbe4",
-      city: "washington",
+      city: "khoy",
       data: {
         clouds: { all: 19 },
         dt: 1615215600,
@@ -182,7 +236,7 @@ export default {
         },
         pop: 0.28,
         pod: "n",
-        sys:{sunset: 10},
+        sys: { sunset: 10 },
         visibility: 10000,
         weather: [
           { id: 801, main: "Clouds", description: "few clouds", icon: "02n" },
@@ -197,10 +251,52 @@ export default {
       const circle = this.$refs.circle;
       const radius = circle.r.baseVal.value;
       const circumference = radius * 2 * Math.PI;
-      const offset = circumference - (this.data.main.humidity / 100) * circumference;
+      const offset =
+        circumference - (this.data.main.humidity / 100) * circumference;
       circle.style.strokeDasharray = `${circumference} ${circumference}`;
       circle.style.strokeDashoffset = `${circumference}`;
       circle.style.strokeDashoffset = offset;
+
+      if (!this.isDay) {
+        this.$refs.Skycondition.style.transform =
+          "translate(-50%, 0) rotate(180deg)";
+      } else {
+        let now = new Date();
+        let utc_timestamp = new Date(
+          now.getUTCFullYear(),
+          now.getUTCMonth(),
+          now.getUTCDate(),
+          now.getUTCHours(),
+          now.getUTCMinutes(),
+          now.getUTCSeconds(),
+          now.getUTCMilliseconds()
+        );
+        let TimeZone = new Date(
+          utc_timestamp.getTime() + this.data.timezone * 1000
+        );
+        let a =
+          new Date(
+            this.data.sys.sunset * 1000 +
+              new Date().getTimezoneOffset() * 60000 +
+              this.data.timezone * 1000
+          ).getTime() -
+          new Date(
+            this.data.sys.sunrise * 1000 +
+              new Date().getTimezoneOffset() * 60000 +
+              this.data.timezone * 1000
+          ).getTime();
+        let b =
+          TimeZone.getTime() -
+          new Date(
+            this.data.sys.sunrise * 1000 +
+              new Date().getTimezoneOffset() * 60000 +
+              this.data.timezone * 1000
+          ).getTime();
+
+        let c = (b / a) * 100;
+        let d = (c * 180) / 100;
+        this.$refs.Skycondition.style.transform = `translate(-50%, 0) rotate(${-d}deg)`;
+      }
     },
     loadData: function () {
       this.$emit("loading-start");
@@ -353,11 +449,11 @@ export default {
   display: flex;
   flex-direction: column;
   flex: auto;
-  div{
+  div {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    img{
+    img {
       width: 56px;
       height: 56px;
       border-radius: 50%;
@@ -535,6 +631,60 @@ export default {
     top: 0;
     left: 50%;
     transform: translate(-50%, -50%);
+  }
+}
+
+.Skycondition {
+  width: 100%;
+  box-shadow: inset 0px -11px 20px -18px #000;
+  overflow: hidden;
+  height: 120px;
+  border-bottom: 1px solid #e8e8e8;
+  position: relative;
+  .Circle {
+    width: 200px;
+    position: absolute;
+    border: 1px dashed #dddddd;
+    height: 200px;
+    border-radius: 50%;
+    left: 50%;
+    top: 20px;
+    transform: translate(-50%, 0) rotate(-29deg);
+    .sun {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      top: 50%;
+      right: 0;
+      transform: translate(+50%, -50%);
+    }
+  }
+}
+.sunTime {
+  display: flex;
+  height: 30px;
+  padding: 3px 0;
+  color: #fff;
+  font-family: "Vazir";
+  font-size: 13px;
+  user-select: none;
+  div {
+    width: 200px;
+    margin: auto;
+    position: relative;
+    height: 100%;
+    span {
+      position: absolute;
+      top: 0;
+    }
+    span:nth-child(1) {
+      left: 0;
+      transform: translate(-50%, 0);
+    }
+    span:nth-child(2) {
+      right: 0;
+      transform: translate(50%, 0);
+    }
   }
 }
 </style>

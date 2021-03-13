@@ -53,17 +53,22 @@
       </div>
     </transition>
     <div class="bg">
-      <Rain :isDay="isDay" v-if="status === 'Thunderstorm' || status === 'Drizzle' || status === 'Rain' "/>
-      <Snow :isDay="isDay" v-if="status === 'Snow'"/>
-      <clear :isDay="isDay" v-if="status === 'Clear'"/>
-      <cloud :isDay="isDay" v-if="status === 'Clouds'"/>
+      <Rain
+        :isDay="isDay"
+        v-if="
+          status === 'Thunderstorm' || status === 'Drizzle' || status === 'Rain'
+        "
+      />
+      <Snow :isDay="isDay" v-if="status === 'Snow'" />
+      <clear :isDay="isDay" v-if="status === 'Clear'" />
+      <cloud :isDay="isDay" v-if="status === 'Clouds'" />
     </div>
     <Weather
       class="Weather"
       @loading-start="isLoading = true"
       @loading-end="isLoading = false"
       @isDay="isDayChange"
-      @status-weather="e=>status = e"
+      @status-weather="e => (status = e)"
     />
   </div>
 </template>
@@ -80,9 +85,9 @@ export default {
   props: {
     msg: String
   },
-  methods:{
-    isDayChange: function (e){
-      this.isDay = e
+  methods: {
+    isDayChange: function(e) {
+      this.isDay = e;
     }
   },
   components: {
@@ -150,8 +155,8 @@ export default {
   backdrop-filter: blur(1px);
   padding: 10px;
 }
-@media (max-width:768px){
-  .Weather{
+@media (max-width: 768px) {
+  .Weather {
     width: 100%;
     margin: 0;
     height: 100%;

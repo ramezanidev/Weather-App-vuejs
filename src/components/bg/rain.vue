@@ -9,7 +9,7 @@
 <script>
 export default {
   name: "rain",
-  props: ['isDay'],
+  props: ["isDay"],
   data() {
     return {
       rain2: "",
@@ -51,7 +51,12 @@ export default {
   background: linear-gradient(to bottom, #010012 0, #020024 83%, #000630 100%);
 }
 .rain-day {
-  background: linear-gradient(to top, #0216d9 0, #010daa 27%, #0070df 100%) !important;
+  background: linear-gradient(
+    to top,
+    #0216d9 0,
+    #010daa 27%,
+    #0070df 100%
+  ) !important;
 }
 .clouds-rain {
   background: transparent url(/img/clouds2.png) repeat top center;

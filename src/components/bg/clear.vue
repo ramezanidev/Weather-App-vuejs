@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'clear-cover' : isDay}">
+  <div :class="{ 'clear-cover': isDay }">
     <div v-if="isDay" class="clouds-clear"></div>
 
     <div v-if="!isDay" class="stars"></div>
@@ -11,7 +11,7 @@
 <script>
 export default {
   name: "clear",
-  props:['isDay']
+  props: ["isDay"]
 };
 </script>
 
@@ -121,10 +121,10 @@ export default {
     background-position: 10000px 0;
   }
 }
-.clear-cover{
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to top, #0216d9 0, #010daa 27%, #0070df 100%);
+.clear-cover {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, #0216d9 0, #010daa 27%, #0070df 100%);
 }
 .clouds-clear {
   top: 0;
