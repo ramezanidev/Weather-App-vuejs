@@ -107,7 +107,7 @@
               <div
                 class="compass-inline"
                 :style="{
-                  transform: `translate(-50%, -50%) rotate(${data.wind.deg}deg)`
+                  transform: `translate(-50%, -50%) rotate(${data.wind.deg}deg)`,
                 }"
               >
                 <div></div>
@@ -115,9 +115,7 @@
               </div>
             </div>
             <img
-              :src="
-                `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
-              "
+              :src="`http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`"
             />
           </div>
         </div>
@@ -130,26 +128,14 @@
       <div class="sunTime">
         <div>
           <span>{{
-            sunset
-              .getHours()
-              .toString()
-              .padStart(2, "0") +
-              ":" +
-              sunset
-                .getMinutes()
-                .toString()
-                .padStart(2, "0")
+            sunset.getHours().toString().padStart(2, "0") +
+            ":" +
+            sunset.getMinutes().toString().padStart(2, "0")
           }}</span>
           <span>{{
-            sunrise
-              .getHours()
-              .toString()
-              .padStart(2, "0") +
-              ":" +
-              sunrise
-                .getMinutes()
-                .toString()
-                .padStart(2, "0")
+            sunrise.getHours().toString().padStart(2, "0") +
+            ":" +
+            sunrise.getMinutes().toString().padStart(2, "0")
           }}</span>
         </div>
       </div>
@@ -158,33 +144,56 @@
       <div class="chart">
         <chartWeather :tempList="tempList" :dateList="dateList" />
       </div>
+      <div class="bottom">
+        <div class="timeZone">
+            <div class="time">
+                <h2>20:25:64</h2>
+                <div>
+                  <span>20:25:64</span>
+                  <span>+03:50</span>
+                </div>
+            </div>
+            <div class="changeLocation">
+                <div>
+                    <input type="text">
+                    <span>Ok</span>
+                </div>
+                <span>massage massage</span>
+            </div>
+        </div>
+        <div class="tablewrap">
+          <WeeklyTable :data="tableData" />
+        </div>
+      </div>
     </main>
   </div>
 </template>
 
 <script>
 import chartWeather from "./chart.vue";
+import WeeklyTable from "./table.vue";
 
 export default {
   components: {
-    chartWeather
+    chartWeather,
+    WeeklyTable,
   },
   computed: {
-    sunset: function() {
+    sunset: function () {
       return new Date(
         this.data.sys.sunset * 1000 +
           new Date().getTimezoneOffset() * 60000 +
           this.data.timezone * 1000
       );
     },
-    sunrise: function() {
+    sunrise: function () {
       return new Date(
         this.data.sys.sunrise * 1000 +
           new Date().getTimezoneOffset() * 60000 +
           this.data.timezone * 1000
       );
     },
-    isDay: function() {
+    isDay: function () {
       let now = new Date();
       let utc_timestamp = new Date(
         now.getUTCFullYear(),
@@ -207,21 +216,15 @@ export default {
       console.log(TimeZone);
       return a > b;
     },
-    updateDate: function() {
+    updateDate: function () {
       let time = new Date(this.data.dt * 1000);
       return (
-        time
-          .getHours()
-          .toString()
-          .padStart(2, "0") +
+        time.getHours().toString().padStart(2, "0") +
         ":" +
-        time
-          .getMinutes()
-          .toString()
-          .padStart(2, "0")
+        time.getMinutes().toString().padStart(2, "0")
       );
     },
-    timezone: function() {
+    timezone: function () {
       return (
         Math.floor(this.data.timezone / 3600)
           .toString()
@@ -234,9 +237,10 @@ export default {
   data() {
     return {
       token: "49f01e8b459085de2580f891869cdbe4",
-      city: "khoy",
-      tempList:'',
-      dateList:'',
+      city: "tokyo",
+      tempList: "",
+      dateList: "",
+      tableData: "",
       data: {
         clouds: { all: 0 },
         dt: 1615215600,
@@ -250,22 +254,22 @@ export default {
           temp: 0,
           temp_kf: 0,
           temp_max: 0,
-          temp_min: 0
+          temp_min: 0,
         },
         pop: 0,
         pod: "n",
         sys: { sunset: 0 },
         visibility: 0,
         weather: [
-          { id: 1, main: "Clouds", description: "few clouds", icon: "02n" }
+          { id: 1, main: "Clouds", description: "few clouds", icon: "02n" },
         ],
         0: { id: 1, main: "Clouds", description: "few clouds", icon: "02n" },
-        wind: { speed: 1, deg: 2 }
-      }
+        wind: { speed: 1, deg: 2 },
+      },
     };
   },
   methods: {
-    setProgress: function() {
+    setProgress: function () {
       const circle = this.$refs.circle;
       const radius = circle.r.baseVal.value;
       const circumference = radius * 2 * Math.PI;
@@ -316,13 +320,13 @@ export default {
         this.$refs.Skycondition.style.transform = `translate(-50%, 0) rotate(${-d}deg)`;
       }
     },
-    loadData: function() {
+    loadData: function () {
       this.$emit("loading-start");
       fetch(
         `http://api.openweathermap.org/data/2.5/weather?q=${this.city}&appid=${this.token}`
       )
-        .then(response => response.json())
-        .then(data => {
+        .then((response) => response.json())
+        .then((data) => {
           this.data = data;
           console.log(this.data);
           this.$emit("isDay", this.isDay);
@@ -330,31 +334,29 @@ export default {
           this.$emit("status-weather", this.data.weather[0].main);
           this.setProgress();
         });
-
-
+        this.$emit("loading-start");
       fetch(
         `http://api.openweathermap.org/data/2.5/forecast?q=${this.city}&appid=${this.token}`
       )
-        .then(response => response.json())
-        .then(data => {
-          let temp = []
-          let date = []
+        .then((response) => response.json())
+        .then((data) => {
+          this.$emit("loading-end");
+          let temp = [];
+          let date = [];
           console.log(data);
-          data.list.forEach(e => temp.push(Math.round(e.main.temp - 273)));
-          data.list.forEach(e => date.push(e.dt_txt.slice(5,16).replace('-','/')));
-          this.tempList = temp
-          this.dateList = date
+          data.list.forEach((e) => temp.push(Math.round(e.main.temp - 273)));
+          data.list.forEach((e) =>
+            date.push(e.dt_txt.slice(5, 16).replace("-", "/"))
+          );
+          this.tempList = temp;
+          this.dateList = date;
+          this.tableData = data.list;
         });
-
-
-
-
-
-    }
+    },
   },
   mounted() {
     this.loadData();
-  }
+  },
 };
 </script>
 
@@ -362,6 +364,7 @@ export default {
 .temp-box {
   font-family: "Vazir";
   width: 270px;
+  min-width: 270px;
   height: 100%;
   display: block;
   overflow-x: hidden;
@@ -742,17 +745,96 @@ export default {
   }
 }
 main {
+  display: flex;
+  flex: auto;
+  flex-direction: column;
+  padding-left: 6px;
+  .chart {
+    width: 100%;
+    height: 255px;
+  }
+
+}
+.bottom{
+    width: 100%;
+    height: calc(100% - 255px);
+    overflow: hidden;
+    display: flex;
+  .tablewrap {
     display: flex;
     flex: auto;
-    padding-left: 6px;
-    .chart{
-      width: 100%;
-      height: 255px;
-    }
+    width: 100%;
+    height: 100%;
+  }
 }
 
+.timeZone{
+    height: 100%;
+    display: flex;
+        flex-direction: column;
+            width: 270px;
+    min-width: 270px;
+  .time{
+    display: flex;
+      height: 200px;
+    width: 100%;
+    position: relative;
+    h2{
+        margin: auto;
+    color: #fff;
+    font-family: 'Vazir';
+    font-size: 28px;
+    font-weight: 400;
+    }
+    div{
+        position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    color: #fff;
+    font-family: 'Vazir';
+    line-height: 15px;
+    font-size: 14px;
+      span{
+      
+      }
+    }
+  }
+}
+.changeLocation{
+display: flex;
+    flex-direction: column;
+    flex: auto;
+  div{
+      width: 100%;
+    height: 40px;
+    position: relative;
+    input{
+        width: 100%;
+    height: 100%;
+    outline: none;
+    border: 1px solid #ffffff14;
+    background-color: #00000021;
+    border-radius: 5px;
+    color: #fff;
+    font-family: 'Vazir';
+    font-size: 18px;
+    padding: 8px 45px 8px 16px;
+    }
+    span{
+    
+    }
+  }
+  >span{
+  
+  }
+}
+
+
 @media (max-width: 768px) {
-  main{
+  main {
     margin-top: 30px;
     padding-left: 0;
   }
@@ -760,17 +842,17 @@ main {
     height: auto;
     padding-right: 0;
   }
-  .tool-bar{
+  .tool-bar {
     margin: 5px 0;
   }
-  .temp{
+  .temp {
     height: 260px;
   }
-  .wind{
-    margin-top:10px;
+  .wind {
+    margin-top: 10px;
   }
-  .Skycondition{
-    margin-top: 50px
+  .Skycondition {
+    margin-top: 50px;
   }
 }
 </style>
