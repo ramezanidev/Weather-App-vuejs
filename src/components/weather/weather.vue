@@ -146,20 +146,20 @@
       </div>
       <div class="bottom">
         <div class="timeZone">
-            <div class="time">
-                <h2>20:25:64</h2>
-                <div>
-                  <span>20:25:64</span>
-                  <span>+03:50</span>
-                </div>
+          <div class="time">
+            <h2>20:25:64</h2>
+            <div>
+              <span>20:25:64</span>
+              <span>+03:50</span>
             </div>
-            <div class="changeLocation">
-                <div>
-                    <input type="text">
-                    <span>Ok</span>
-                </div>
-                <span>massage massage</span>
+          </div>
+          <div class="changeLocation">
+            <div>
+              <input type="text" />
+              <span>Ok</span>
             </div>
+            <span>massage massage</span>
+          </div>
         </div>
         <div class="tablewrap">
           <WeeklyTable :data="tableData" />
@@ -334,7 +334,7 @@ export default {
           this.$emit("status-weather", this.data.weather[0].main);
           this.setProgress();
         });
-        this.$emit("loading-start");
+      this.$emit("loading-start");
       fetch(
         `http://api.openweathermap.org/data/2.5/forecast?q=${this.city}&appid=${this.token}`
       )
@@ -753,13 +753,12 @@ main {
     width: 100%;
     height: 255px;
   }
-
 }
-.bottom{
-    width: 100%;
-    height: calc(100% - 255px);
-    overflow: hidden;
-    display: flex;
+.bottom {
+  width: 100%;
+  height: calc(100% - 255px);
+  overflow: hidden;
+  display: flex;
   .tablewrap {
     display: flex;
     flex: auto;
@@ -768,70 +767,75 @@ main {
   }
 }
 
-.timeZone{
-    height: 100%;
+.timeZone {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 270px;
+  min-width: 270px;
+  .time {
     display: flex;
-        flex-direction: column;
-            width: 270px;
-    min-width: 270px;
-  .time{
-    display: flex;
-      height: 200px;
+    height: 200px;
     width: 100%;
     position: relative;
-    h2{
-        margin: auto;
-    color: #fff;
-    font-family: 'Vazir';
-    font-size: 28px;
-    font-weight: 400;
+    h2 {
+      margin: auto;
+      color: #fff;
+      font-family: "Vazir";
+      font-size: 28px;
+      font-weight: 400;
     }
-    div{
-        position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    color: #fff;
-    font-family: 'Vazir';
-    line-height: 15px;
-    font-size: 14px;
-      span{
-      
+    div {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      color: #fff;
+      font-family: "Vazir";
+      line-height: 15px;
+      font-size: 14px;
+      span {
       }
     }
   }
 }
-.changeLocation{
-display: flex;
-    flex-direction: column;
-    flex: auto;
-  div{
-      width: 100%;
+.changeLocation {
+  display: flex;
+  margin-top: 10px;
+  flex-direction: column;
+  flex: auto;
+  div {
+    width: 100%;
     height: 40px;
     position: relative;
-    input{
-        width: 100%;
-    height: 100%;
-    outline: none;
-    border: 1px solid #ffffff14;
-    background-color: #00000021;
-    border-radius: 5px;
-    color: #fff;
-    font-family: 'Vazir';
-    font-size: 18px;
-    padding: 8px 45px 8px 16px;
+    input {
+      width: 100%;
+      height: 100%;
+      outline: none;
+      border: 1px solid #ffffff14;
+      background-color: #00000021;
+      border-radius: 5px;
+      color: #fff;
+      font-family: "Vazir";
+      font-size: 18px;
+      padding: 8px 45px 8px 16px;
     }
-    span{
-    
+    span {
+      position: absolute;
+      top: 50%;
+      right: 11px;
+      transform: translate(0, -50%);
     }
   }
-  >span{
-  
+  > span {
+    color: #b7b7b7;
+    font-family: "Vazir";
+    font-size: 12px;
+    margin: 4px 0;
   }
 }
-
 
 @media (max-width: 768px) {
   main {
