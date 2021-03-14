@@ -107,7 +107,7 @@
               <div
                 class="compass-inline"
                 :style="{
-                  transform: `translate(-50%, -50%) rotate(${data.wind.deg}deg)`,
+                  transform: `translate(-50%, -50%) rotate(${data.wind.deg}deg)`
                 }"
               >
                 <div></div>
@@ -115,7 +115,9 @@
               </div>
             </div>
             <img
-              :src="`http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`"
+              :src="
+                `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
+              "
             />
           </div>
         </div>
@@ -128,14 +130,26 @@
       <div class="sunTime">
         <div>
           <span>{{
-            sunset.getHours().toString().padStart(2, "0") +
-            ":" +
-            sunset.getMinutes().toString().padStart(2, "0")
+            sunset
+              .getHours()
+              .toString()
+              .padStart(2, "0") +
+              ":" +
+              sunset
+                .getMinutes()
+                .toString()
+                .padStart(2, "0")
           }}</span>
           <span>{{
-            sunrise.getHours().toString().padStart(2, "0") +
-            ":" +
-            sunrise.getMinutes().toString().padStart(2, "0")
+            sunrise
+              .getHours()
+              .toString()
+              .padStart(2, "0") +
+              ":" +
+              sunrise
+                .getMinutes()
+                .toString()
+                .padStart(2, "0")
           }}</span>
         </div>
       </div>
@@ -147,15 +161,15 @@
       <div class="bottom">
         <div class="timeZone">
           <div class="time">
-            <h2>20:25:64</h2>
+            <h2>{{ setTimeZoneCity}}</h2>
             <div>
-              <span>20:25:64</span>
-              <span>+03:50</span>
+              <span>UTC:{{setUTCTime}}</span>
+              <span>{{ timezone }}</span>
             </div>
           </div>
           <div class="changeLocation">
             <div>
-              <input type="text" />
+              <input type="text" :placeholder="city" />
               <span>Ok</span>
             </div>
             <span>massage massage</span>
@@ -168,7 +182,6 @@
     </main>
   </div>
 </template>
-
 <script>
 import chartWeather from "./chart.vue";
 import WeeklyTable from "./table.vue";
@@ -176,26 +189,26 @@ import WeeklyTable from "./table.vue";
 export default {
   components: {
     chartWeather,
-    WeeklyTable,
+    WeeklyTable
   },
   computed: {
-    sunset: function () {
+    sunset: function() {
       return new Date(
         this.data.sys.sunset * 1000 +
           new Date().getTimezoneOffset() * 60000 +
           this.data.timezone * 1000
       );
     },
-    sunrise: function () {
+    sunrise: function() {
       return new Date(
         this.data.sys.sunrise * 1000 +
           new Date().getTimezoneOffset() * 60000 +
           this.data.timezone * 1000
       );
     },
-    isDay: function () {
+    UTCdate: function() {
       let now = new Date();
-      let utc_timestamp = new Date(
+      return new Date(
         now.getUTCFullYear(),
         now.getUTCMonth(),
         now.getUTCDate(),
@@ -204,27 +217,37 @@ export default {
         now.getUTCSeconds(),
         now.getUTCMilliseconds()
       );
-      let TimeZone = new Date(
-        utc_timestamp.getTime() + this.data.timezone * 1000
-      );
+    },
+    isDay: function() {
+      // let utc_timestamp = this.getUTCTime();
+      let TimeZone = new Date(this.getUTCTime().getTime() + this.data.timezone * 1000);
       let a = new Date(
         this.data.sys.sunset * 1000 +
           new Date().getTimezoneOffset() * 60000 +
           this.data.timezone * 1000
-      ).getTime();
-      let b = TimeZone.getTime();
-      console.log(TimeZone);
-      return a > b;
-    },
-    updateDate: function () {
-      let time = new Date(this.data.dt * 1000);
-      return (
-        time.getHours().toString().padStart(2, "0") +
-        ":" +
-        time.getMinutes().toString().padStart(2, "0")
       );
+      let c = new Date(
+        this.data.sys.sunrise * 1000 +
+          new Date().getTimezoneOffset() * 60000 +
+          this.data.timezone * 1000
+      );
+      let b = TimeZone.getTime();
+      console.log(this.data.timezone*1000);
+      console.log(this.getUTCTime());
+      console.log(TimeZone);
+      console.log(a);
+      console.log(c);
+      console.log(a.getTime() > b);
+      console.log(b > c.getTime());
+      console.log((a.getTime() > b) && (b > c.getTime()));
+      console.log(a > b > c)
+      return (a.getTime() > b) && (b > c.getTime());
     },
-    timezone: function () {
+    updateDate: function() {
+      let time = new Date(this.data.dt * 1000);
+      return this.DateToStr(time)
+    },
+    timezone: function() {
       return (
         Math.floor(this.data.timezone / 3600)
           .toString()
@@ -232,15 +255,17 @@ export default {
         ":" +
         ((this.data.timezone % 3600) / 60).toString().padStart(2, "0")
       );
-    },
+    }
   },
   data() {
     return {
       token: "49f01e8b459085de2580f891869cdbe4",
-      city: "tokyo",
+      city: "Tehran",
       tempList: "",
       dateList: "",
       tableData: "",
+      setTimeZoneCity: "",
+      setUTCTime: "",
       data: {
         clouds: { all: 0 },
         dt: 1615215600,
@@ -254,22 +279,45 @@ export default {
           temp: 0,
           temp_kf: 0,
           temp_max: 0,
-          temp_min: 0,
+          temp_min: 0
         },
         pop: 0,
         pod: "n",
         sys: { sunset: 0 },
         visibility: 0,
         weather: [
-          { id: 1, main: "Clouds", description: "few clouds", icon: "02n" },
+          { id: 1, main: "Clouds", description: "few clouds", icon: "02n" }
         ],
+        timezone:1,
         0: { id: 1, main: "Clouds", description: "few clouds", icon: "02n" },
-        wind: { speed: 1, deg: 2 },
-      },
+        wind: { speed: 1, deg: 2 }
+      }
     };
   },
   methods: {
-    setProgress: function () {
+    getTimeZoneCity: function() {
+      let UTCdate = this.getUTCTime();
+      let TimeZone = new Date(UTCdate.getTime() + this.data.timezone * 1000);
+      this.setTimeZoneCity = this.DateToStr(TimeZone)
+    },
+    getUTCTime: function (){
+      let now = new Date();
+      let UTCdate = new Date(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        now.getUTCHours(),
+        now.getUTCMinutes(),
+        now.getUTCSeconds(),
+        now.getUTCMilliseconds()
+      );
+      this.setUTCTime = this.DateToStr(UTCdate)
+      return UTCdate
+    },
+    DateToStr: function (e){
+      return e.getHours().toString().padStart(2, "0") +":" +e.getMinutes().toString().padStart(2, "0")+':'+e.getSeconds().toString().padStart(2, "0")
+    },
+    setProgress: function() {
       const circle = this.$refs.circle;
       const radius = circle.r.baseVal.value;
       const circumference = radius * 2 * Math.PI;
@@ -283,16 +331,7 @@ export default {
         this.$refs.Skycondition.style.transform =
           "translate(-50%, 0) rotate(180deg)";
       } else {
-        let now = new Date();
-        let utc_timestamp = new Date(
-          now.getUTCFullYear(),
-          now.getUTCMonth(),
-          now.getUTCDate(),
-          now.getUTCHours(),
-          now.getUTCMinutes(),
-          now.getUTCSeconds(),
-          now.getUTCMilliseconds()
-        );
+        let utc_timestamp = this.getUTCTime();
         let TimeZone = new Date(
           utc_timestamp.getTime() + this.data.timezone * 1000
         );
@@ -320,13 +359,13 @@ export default {
         this.$refs.Skycondition.style.transform = `translate(-50%, 0) rotate(${-d}deg)`;
       }
     },
-    loadData: function () {
+    loadData: function() {
       this.$emit("loading-start");
       fetch(
         `http://api.openweathermap.org/data/2.5/weather?q=${this.city}&appid=${this.token}`
       )
-        .then((response) => response.json())
-        .then((data) => {
+        .then(response => response.json())
+        .then(data => {
           this.data = data;
           console.log(this.data);
           this.$emit("isDay", this.isDay);
@@ -338,25 +377,27 @@ export default {
       fetch(
         `http://api.openweathermap.org/data/2.5/forecast?q=${this.city}&appid=${this.token}`
       )
-        .then((response) => response.json())
-        .then((data) => {
+        .then(response => response.json())
+        .then(data => {
           this.$emit("loading-end");
           let temp = [];
           let date = [];
           console.log(data);
-          data.list.forEach((e) => temp.push(Math.round(e.main.temp - 273)));
-          data.list.forEach((e) =>
+          data.list.forEach(e => temp.push(Math.round(e.main.temp - 273)));
+          data.list.forEach(e =>
             date.push(e.dt_txt.slice(5, 16).replace("-", "/"))
           );
           this.tempList = temp;
           this.dateList = date;
           this.tableData = data.list;
         });
-    },
+    }
   },
   mounted() {
     this.loadData();
-  },
+    setInterval(this.getTimeZoneCity,1000)
+    setInterval(this.getUTCTime,1000)
+  }
 };
 </script>
 
@@ -770,6 +811,7 @@ main {
 .timeZone {
   height: 100%;
   display: flex;
+  padding-right: 10px;
   flex-direction: column;
   width: 270px;
   min-width: 270px;

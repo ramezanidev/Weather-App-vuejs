@@ -60,7 +60,7 @@
         "
       />
       <Snow :isDay="isDay" v-if="status === 'Snow'" />
-      <clear :isDay="isDay" v-if="status === 'Clear'" />
+      <clear :isDay="isDay" v-if="status === 'Clear' || status === 'Haze'"  />
       <cloud :isDay="isDay" v-if="status === 'Clouds'" />
     </div>
     <Weather
