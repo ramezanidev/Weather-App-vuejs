@@ -161,22 +161,53 @@
       <div class="bottom">
         <div class="timeZone">
           <div class="time">
-            <h2>{{ setTimeZoneCity}}</h2>
+            <h2>{{ setTimeZoneCity }}</h2>
             <div>
-              <span>UTC:{{setUTCTime}}</span>
+              <span>UTC:{{ setUTCTime }}</span>
               <span>{{ timezone }}</span>
             </div>
           </div>
           <div class="changeLocation">
             <div>
-              <input type="text" :placeholder="city" />
-              <span>Ok</span>
+              <input
+                type="text"
+                :placeholder="city"
+                ref="newLocationInput"
+                v-model="newLocation"
+              />
+              <span ref="newLocationBtn" @click="checkNewLocation">
+                <svg
+                  version="1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 48 48"
+                  enable-background="new 0 0 48 48"
+                >
+                  <circle cx="24" cy="24" r="21" />
+                  <polygon
+                    points="34.6,14.6 21,28.2 15.4,22.6 12.6,25.4 21,33.8 37.4,17.4"
+                  />
+                </svg>
+              </span>
             </div>
-            <span>massage massage</span>
+            <span>{{ errorNewLocation }}</span>
+            <div>
+              <span>
+                <span>Lat:</span>
+                <span>{{ data.coord.lat || 0 }}</span>
+              </span>
+              <span>
+                <span>Lon:</span>
+                <span>{{ data.coord.lon || 0 }}</span>
+              </span>
+              <span style="border-bottom: none">
+                <span>Country:</span>
+                <span>{{ data.sys.country}}</span>
+              </span>
+            </div>
           </div>
         </div>
         <div class="tablewrap">
-          <WeeklyTable :data="tableData" />
+          <WeeklyTable :dataTable="tableData" />
         </div>
       </div>
     </main>
@@ -184,7 +215,7 @@
 </template>
 <script>
 import chartWeather from "./chart.vue";
-import WeeklyTable from "./table.vue";
+import WeeklyTable from "./tableWeather.vue";
 
 export default {
   components: {
@@ -219,8 +250,9 @@ export default {
       );
     },
     isDay: function() {
-      // let utc_timestamp = this.getUTCTime();
-      let TimeZone = new Date(this.getUTCTime().getTime() + this.data.timezone * 1000);
+      let TimeZone = new Date(
+        this.getUTCTime().getTime() + this.data.timezone * 1000
+      );
       let a = new Date(
         this.data.sys.sunset * 1000 +
           new Date().getTimezoneOffset() * 60000 +
@@ -232,20 +264,11 @@ export default {
           this.data.timezone * 1000
       );
       let b = TimeZone.getTime();
-      console.log(this.data.timezone*1000);
-      console.log(this.getUTCTime());
-      console.log(TimeZone);
-      console.log(a);
-      console.log(c);
-      console.log(a.getTime() > b);
-      console.log(b > c.getTime());
-      console.log((a.getTime() > b) && (b > c.getTime()));
-      console.log(a > b > c)
-      return (a.getTime() > b) && (b > c.getTime());
+      return a.getTime() > b && b > c.getTime();
     },
     updateDate: function() {
       let time = new Date(this.data.dt * 1000);
-      return this.DateToStr(time)
+      return this.DateToStr(time);
     },
     timezone: function() {
       return (
@@ -260,16 +283,19 @@ export default {
   data() {
     return {
       token: "49f01e8b459085de2580f891869cdbe4",
-      city: "Tehran",
+      city: localStorage.getItem("city") || "Tehran",
       tempList: "",
       dateList: "",
       tableData: "",
       setTimeZoneCity: "",
       setUTCTime: "",
+      newLocation: "",
+      errorNewLocation: "Enter the desired location",
       data: {
         clouds: { all: 0 },
         dt: 1615215600,
         dt_txt: "0",
+        coord:{lon:0,Lat:0},
         main: {
           feels_like: 278.53,
           grnd_level: 0,
@@ -288,19 +314,25 @@ export default {
         weather: [
           { id: 1, main: "Clouds", description: "few clouds", icon: "02n" }
         ],
-        timezone:1,
+        timezone: 1,
         0: { id: 1, main: "Clouds", description: "few clouds", icon: "02n" },
         wind: { speed: 1, deg: 2 }
       }
     };
   },
+  watch: {
+    city: function(e) {
+      localStorage.setItem("city", e);
+      this.loadData();
+    }
+  },
   methods: {
     getTimeZoneCity: function() {
       let UTCdate = this.getUTCTime();
       let TimeZone = new Date(UTCdate.getTime() + this.data.timezone * 1000);
-      this.setTimeZoneCity = this.DateToStr(TimeZone)
+      this.setTimeZoneCity = this.DateToStr(TimeZone);
     },
-    getUTCTime: function (){
+    getUTCTime: function() {
       let now = new Date();
       let UTCdate = new Date(
         now.getUTCFullYear(),
@@ -311,11 +343,26 @@ export default {
         now.getUTCSeconds(),
         now.getUTCMilliseconds()
       );
-      this.setUTCTime = this.DateToStr(UTCdate)
-      return UTCdate
+      this.setUTCTime = this.DateToStr(UTCdate);
+      return UTCdate;
     },
-    DateToStr: function (e){
-      return e.getHours().toString().padStart(2, "0") +":" +e.getMinutes().toString().padStart(2, "0")+':'+e.getSeconds().toString().padStart(2, "0")
+    DateToStr: function(e) {
+      return (
+        e
+          .getHours()
+          .toString()
+          .padStart(2, "0") +
+        ":" +
+        e
+          .getMinutes()
+          .toString()
+          .padStart(2, "0") +
+        ":" +
+        e
+          .getSeconds()
+          .toString()
+          .padStart(2, "0")
+      );
     },
     setProgress: function() {
       const circle = this.$refs.circle;
@@ -359,6 +406,24 @@ export default {
         this.$refs.Skycondition.style.transform = `translate(-50%, 0) rotate(${-d}deg)`;
       }
     },
+    checkNewLocation: function() {
+      fetch(
+        `http://api.openweathermap.org/data/2.5/weather?q=${this.newLocation}&appid=${this.token}`
+      )
+        .then(response => response.json())
+        .then(data => {
+          if (data.cod === 200) {
+            this.city = this.newLocation;
+            this.newLocation = "";
+            this.$refs.newLocationBtn.classList.remove("error");
+            this.errorNewLocation = "Enter the desired location";
+            this.$refs.newLocationInput.focus();
+          } else {
+            this.$refs.newLocationBtn.classList.add("error");
+            this.errorNewLocation = data.message;
+          }
+        });
+    },
     loadData: function() {
       this.$emit("loading-start");
       fetch(
@@ -366,8 +431,8 @@ export default {
       )
         .then(response => response.json())
         .then(data => {
+          console.log(data)
           this.data = data;
-          console.log(this.data);
           this.$emit("isDay", this.isDay);
           this.$emit("loading-end");
           this.$emit("status-weather", this.data.weather[0].main);
@@ -382,7 +447,6 @@ export default {
           this.$emit("loading-end");
           let temp = [];
           let date = [];
-          console.log(data);
           data.list.forEach(e => temp.push(Math.round(e.main.temp - 273)));
           data.list.forEach(e =>
             date.push(e.dt_txt.slice(5, 16).replace("-", "/"))
@@ -395,8 +459,8 @@ export default {
   },
   mounted() {
     this.loadData();
-    setInterval(this.getTimeZoneCity,1000)
-    setInterval(this.getUTCTime,1000)
+    setInterval(this.getTimeZoneCity, 1000);
+    setInterval(this.getUTCTime, 1000);
   }
 };
 </script>
@@ -838,17 +902,38 @@ main {
       font-family: "Vazir";
       line-height: 15px;
       font-size: 14px;
-      span {
-      }
     }
   }
+}
+
+.changeLocation{
+    div:nth-child(3){
+    display: flex;
+    flex-wrap: wrap;
+    flex: auto;
+    span{
+        span:last-child{
+           justify-content:flex-end;
+        }
+        display: flex;
+        text-transform: capitalize;
+        justify-content: space-between;
+        width: 100%;
+        font-family: "Vazir";
+        color: lightgray;
+        border-bottom: 1px solid #ffffff61;
+        font-size: 14px;
+        height: 26px;
+        font-weight: lighter;
+      }
+    }
 }
 .changeLocation {
   display: flex;
   margin-top: 10px;
   flex-direction: column;
   flex: auto;
-  div {
+  div:nth-child(1) {
     width: 100%;
     height: 40px;
     position: relative;
@@ -864,11 +949,26 @@ main {
       font-size: 18px;
       padding: 8px 45px 8px 16px;
     }
+    input::placeholder {
+      color: #fff;
+    }
     span {
       position: absolute;
       top: 50%;
-      right: 11px;
+      right: 8px;
+      cursor: pointer;
+      width: 23px;
+      height: 23px;
       transform: translate(0, -50%);
+      svg {
+        width: 100%;
+        polygon {
+          fill: rgb(0, 0, 0);
+        }
+        circle {
+          fill: #e5e5e5;
+        }
+      }
     }
   }
   > span {
@@ -877,6 +977,12 @@ main {
     font-size: 12px;
     margin: 4px 0;
   }
+}
+.error svg circle {
+  fill: #ff0000 !important;
+}
+.error svg polygon {
+  fill: #fff !important;
 }
 
 @media (max-width: 768px) {
@@ -899,6 +1005,12 @@ main {
   }
   .Skycondition {
     margin-top: 50px;
+  }
+  .timeZone{
+    width:100%;
+  }
+  .bottom{
+      flex-direction: column;
   }
 }
 </style>
