@@ -11,17 +11,17 @@
 </template>
 
 <script>
-import Chart from 'chart.js'
+import Chart from "chart.js";
 export default {
   name: "chart",
   props: ["tempList", "dateList"],
   watch: {
-    tempList: function () {
+    tempList: function() {
       this.setChart();
-    },
+    }
   },
   methods: {
-    setChart: function () {
+    setChart: function() {
       let el = this.$refs.Chart.getContext("2d");
       new Chart(el, {
         type: "line",
@@ -39,17 +39,17 @@ export default {
               pointRadius: 2,
               fill: !0,
               borderWidth: 1,
-              data: this.tempList,
-            },
-          ],
+              data: this.tempList
+            }
+          ]
         },
         options: {
           tooltips: {
             callbacks: {
-              label: function (e) {
+              label: function(e) {
                 return e.yLabel;
-              },
-            },
+              }
+            }
           },
           legend: { display: false },
           responsive: true,
@@ -62,10 +62,10 @@ export default {
                   fontStyle: "lighter",
                   beginAtZero: true,
                   maxTicksLimit: 5,
-                  padding: 15,
+                  padding: 15
                 },
-                gridLines: { drawTicks: true, display: true },
-              },
+                gridLines: { drawTicks: true, display: true }
+              }
             ],
             xAxes: [
               {
@@ -73,21 +73,21 @@ export default {
                 ticks: {
                   padding: 15,
                   fontColor: "#ccc",
-                  fontStyle: "lighter",
-                },
-              },
-            ],
-          },
-        },
+                  fontStyle: "lighter"
+                }
+              }
+            ]
+          }
+        }
       });
-    },
-  },
+    }
+  }
 };
 </script>
 
 <style>
 canvas {
-    width: 100% !important;
-    height: 255px !important;
+  width: 100% !important;
+  height: 255px !important;
 }
 </style>

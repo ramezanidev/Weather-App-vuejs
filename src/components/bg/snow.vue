@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { SnowflakeJs } from "@aicdev/snowflakejs";
+import { SnowflakeJs } from "@aicdev/snowflakejs/dist/snowflake.min.js";
 export default {
   name: "Snow",
   props: {

@@ -431,7 +431,6 @@ export default {
       )
         .then(response => response.json())
         .then(data => {
-          console.log(data)
           this.data = data;
           this.$emit("isDay", this.isDay);
           this.$emit("loading-end");
@@ -457,7 +456,7 @@ export default {
         });
     }
   },
-  mounted() {
+  created() {
     this.loadData();
     setInterval(this.getTimeZoneCity, 1000);
     setInterval(this.getUTCTime, 1000);
