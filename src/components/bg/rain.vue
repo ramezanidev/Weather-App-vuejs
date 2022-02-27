@@ -1,42 +1,44 @@
 <template>
-  <div class="bg back-row-toggle splat-toggle" :class="{ 'rain-day': isDay }">
+  <div
+    class="bg back-row-toggle splat-toggle"
+    :class="{ 'rain-day': props.isDay }"
+  >
     <div class="clouds-rain"></div>
     <div class="rain front-row" v-html="rain1"></div>
     <div class="rain back-row" v-html="rain2"></div>
   </div>
 </template>
 
-<script>
-export default {
-  name: "rain",
-  props: ["isDay"],
-  data() {
-    return {
-      rain2: "",
-      rain1: ""
-    };
+<script setup>
+import { defineProps, onMounted, ref } from "vue";
+
+const props = defineProps({
+  isDay: {
+    type: Boolean,
   },
-  mounted() {
-    var increment = 0;
-    var drops = "";
-    var backDrops = "";
-    while (increment < 100) {
-      var randoHundo = Math.floor(Math.random() * (98 - 1 + 1) + 1);
-      var randoFiver = Math.floor(Math.random() * (5 - 2 + 1) + 2);
-      increment += randoFiver;
-      drops += `<div class="drop" style="left:calc(${increment}% + 300px); bottom:${randoFiver +
-        randoFiver -
-        1 +
-        100}%; animation-delay: 0.${randoHundo}s; animation-duration: 0.5${randoHundo}s;"><div class="stem" style="animation-delay: 0.${randoHundo}s; animation-duration: 0.5 ${randoHundo}s;"></div><div class="splat" style="animation-delay: 0.${randoHundo}s; animation-duration: 0.5${randoHundo}s;"></div></div>`;
-      backDrops += `<div class="drop" style="right:${increment}%; bottom: ${randoFiver +
-        randoFiver -
-        1 +
-        100}%; animation-delay: 0.${randoHundo}s; animation-duration: 0.5${randoHundo}s;"><div class="stem" style="animation-delay: 0.${randoHundo}s; animation-duration: 0.5${randoHundo}s;"></div><div class="splat" style="animation-delay: 0.${randoHundo}s; animation-duration: 0.5${randoHundo}s;"></div></div>`;
-    }
-    this.rain1 = drops;
-    this.rain2 = backDrops;
+});
+
+const rain1 = ref("");
+const rain2 = ref("");
+
+onMounted(() => {
+  let increment = 0;
+  let drops = "";
+  let backDrops = "";
+  while (increment < 100) {
+    let randoHundo = Math.floor(Math.random() * (98 - 1 + 1) + 1);
+    let randoFiver = Math.floor(Math.random() * (5 - 2 + 1) + 2);
+    increment += randoFiver;
+    drops += `<div class="drop" style="left:calc(${increment}% + 300px); bottom:${
+      randoFiver + randoFiver - 1 + 100
+    }%; animation-delay: 0.${randoHundo}s; animation-duration: 0.5${randoHundo}s;"><div class="stem" style="animation-delay: 0.${randoHundo}s; animation-duration: 0.5 ${randoHundo}s;"></div><div class="splat" style="animation-delay: 0.${randoHundo}s; animation-duration: 0.5${randoHundo}s;"></div></div>`;
+    backDrops += `<div class="drop" style="right:${increment}%; bottom: ${
+      randoFiver + randoFiver - 1 + 100
+    }%; animation-delay: 0.${randoHundo}s; animation-duration: 0.5${randoHundo}s;"><div class="stem" style="animation-delay: 0.${randoHundo}s; animation-duration: 0.5${randoHundo}s;"></div><div class="splat" style="animation-delay: 0.${randoHundo}s; animation-duration: 0.5${randoHundo}s;"></div></div>`;
   }
-};
+  rain1.value = drops;
+  rain2.value = backDrops;
+});
 </script>
 
 <style>
@@ -59,7 +61,7 @@ export default {
   ) !important;
 }
 .clouds-rain {
-  background: transparent url(/img/clouds2.png) repeat top center;
+  background: transparent url(~/public/img/clouds2.png) repeat top center;
   z-index: 3;
   width: 100%;
   height: 600px;

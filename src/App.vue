@@ -2,14 +2,8 @@
   <Panel />
 </template>
 
-<script>
+<script setup>
 import Panel from "./components/panel";
-export default {
-  name: "App",
-  components: {
-    Panel
-  }
-};
 </script>
 
 <style>
@@ -21,6 +15,7 @@ export default {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
 }
+
 html,
 body {
   width: 100%;

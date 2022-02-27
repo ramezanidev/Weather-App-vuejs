@@ -1,6 +1,6 @@
 <template>
   <div id="section" class="container">
-    <transition name="lading">
+    <transition name="laoding">
       <div v-if="isLoading" class="loading-page">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -53,58 +53,58 @@
       </div>
     </transition>
     <div class="bg">
-      <Rain
-        :isDay="isDay"
-        v-if="
-          status === 'Thunderstorm' || status === 'Drizzle' || status === 'Rain'
-        "
-      />
-      <Snow :isDay="isDay" v-if="status === 'Snow'" />
-      <clear :isDay="isDay" v-if="status === 'Clear' || status === 'Haze'" />
-      <cloud :isDay="isDay" v-if="status === 'Clouds'" />
+      <component :isDay="isDay" :is="bgComponent" />
     </div>
     <Weather
       class="Weather"
       @loading-start="isLoading = true"
       @loading-end="isLoading = false"
       @isDay="isDayChange"
-      @status-weather="e => (status = e)"
+      @status-weather="(e) => (status = e)"
     />
   </div>
 </template>
 
-<script>
-import Rain from "./bg/rain";
-import clear from "./bg/clear";
-import Snow from "./bg/snow";
-import cloud from "./bg/cloud";
-import Weather from "./weather/weather";
+<script setup>
+import { ref, computed } from "vue";
 
-export default {
-  name: "Panel",
-  props: {
-    msg: String
-  },
-  methods: {
-    isDayChange: function(e) {
-      this.isDay = e;
-    }
-  },
-  components: {
-    Rain,
-    clear,
-    cloud,
-    Snow,
-    Weather
-  },
-  data: function() {
-    return {
-      isLoading: true,
-      isDay: false,
-      status: null
-    };
-  }
+import Weather from "./weather/weather-app";
+
+import Rain from "./bg/rain";
+import Clear from "./bg/clear";
+import Snow from "./bg/snow";
+import Cloud from "./bg/cloud";
+
+const isLoading = ref(false);
+const isDay = ref(false);
+const status = ref(null);
+
+const isDayChange = (payload) => {
+  isDay.value = payload;
 };
+
+const bgComponent = computed(() => {
+  switch (status.value) {
+    case "Thunderstorm":
+    case "Drizzle":
+    case "Rain": {
+      return Rain;
+    }
+    case "Snow": {
+      return Snow;
+    }
+    case "Clear":
+    case "Haze": {
+      return Clear;
+    }
+    case "Clouds": {
+      return Cloud;
+    }
+    default: {
+      return "div";
+    }
+  }
+});
 </script>
 
 <style scoped lang="scss">
@@ -134,12 +134,12 @@ export default {
   }
 }
 
-.lading-enter-active,
-.lading-leave-active {
+.laoding-enter-active,
+.laoding-leave-active {
   transition: 0.7s;
 }
-.lading-enter-from,
-.lading-leave-to {
+.laoding-enter-from,
+.laoding-leave-to {
   opacity: 0;
 }
 .Weather {

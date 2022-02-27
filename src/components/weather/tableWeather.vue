@@ -7,22 +7,29 @@
       <span>Weather</span>
     </div>
     <div class="tbody">
-      <div v-for="Data in dataTable" :key="Data">
+      <div v-for="Data in props.dataTable" :key="Data">
         <span>{{ Data.dt_txt.slice(5, 16) }}</span>
         <span>{{ Data.weather[0].description }}</span>
-        <span>{{ Math.floor(Data.main.temp_min - 273) + "° / " + Math.floor(Data.main.temp_max - 273)+"°"}}</span>
+        <span>{{
+          Math.floor(Data.main.temp_min - 273) +
+          "° / " +
+          Math.floor(Data.main.temp_max - 273) +
+          "°"
+        }}</span>
         <span>
-          <img :src="`http://openweathermap.org/img/wn/${Data.weather[0].icon}@2x.png`" />
+          <img
+            :src="`http://openweathermap.org/img/wn/${Data.weather[0].icon}@2x.png`"
+          />
         </span>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  props: ["dataTable"]
-};
+<script setup>
+import { defineProps } from "vue";
+
+const props = defineProps(["dataTable"]);
 </script>
 
 <style scoped>

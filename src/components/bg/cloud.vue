@@ -1,18 +1,21 @@
 <template>
-  <div :class="{ 'cloud-cover': isDay }">
-    <div v-if="isDay" class="clouds-cloud"></div>
+  <div :class="{ 'cloud-cover': props.isDay }">
+    <div v-if="props.isDay" class="clouds-cloud"></div>
 
-    <div v-if="!isDay" class="stars"></div>
-    <div v-if="!isDay" class="twinkling"></div>
-    <div v-if="!isDay" class="clouds"></div>
+    <div v-if="!props.isDay" class="stars"></div>
+    <div v-if="!props.isDay" class="twinkling"></div>
+    <div v-if="!props.isDay" class="clouds"></div>
   </div>
 </template>
 
-<script>
-export default {
-  name: "cloud",
-  props: ["isDay"]
-};
+<script setup>
+import { defineProps } from "vue";
+
+const props = defineProps({
+  isDay: {
+    type: Boolean,
+  },
+});
 </script>
 
 <style>
@@ -63,12 +66,12 @@ export default {
 }
 
 .stars {
-  background: #000 url(/img/stars.png) repeat top center;
+  background: #000 url('~/public/img/stars.png') repeat top center;
   z-index: 0;
 }
 
 .twinkling {
-  background: transparent url(/img/twinkling.png) repeat top center;
+  background: transparent url('~/public/img/twinkling.png') repeat top center;
   z-index: 1;
 
   -moz-animation: move-twink-back 200s linear infinite;
@@ -79,7 +82,7 @@ export default {
 }
 
 .clouds {
-  background: transparent url(/img/clouds2.png) repeat top center;
+  background: transparent url(~/public/img/clouds2.png) repeat top center;
   z-index: 3;
   -moz-animation: move-clouds-back 700s linear infinite;
   -ms-animation: move-clouds-back 700s linear infinite;
@@ -140,7 +143,7 @@ export default {
   background-size: contain;
   background-position: center;
   background-color: transparent;
-  background-image: url(/img/clouds2.png);
+  background-image: url(~/public/img/clouds2.png);
   animation: move-clouds-back 700s linear infinite;
   animation: move-clouds-back 700s linear infinite;
   -o-animation: move-clouds-back 700s linear infinite;

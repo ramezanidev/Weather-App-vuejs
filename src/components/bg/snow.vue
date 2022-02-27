@@ -1,21 +1,23 @@
 <template>
-  <div class="snowflakes" :class="{ 'snowflake-day': isDay }">
+  <div class="snowflakes" :class="{ 'snowflake-day': props.$isDay }">
     <div class="clouds-snow"></div>
   </div>
 </template>
 
-<script>
+<script setup>
 import { SnowflakeJs } from "@aicdev/snowflakejs/dist/snowflake.min.js";
-export default {
-  name: "Snow",
-  props: {
-    isDay: Boolean
+import { defineProps, onMounted } from "vue";
+
+const props = defineProps({
+  isDay: {
+    type: Boolean,
   },
-  mounted() {
-    const snowflake = new SnowflakeJs(500, 250, 5000, 6, 15);
-    snowflake.init();
-  }
-};
+});
+
+onMounted(() => {
+  const snowflake = new SnowflakeJs(500, 250, 5000, 6, 15);
+  snowflake.init();
+});
 </script>
 
 <style>
@@ -33,7 +35,7 @@ export default {
   ) !important;
 }
 .clouds-snow {
-  background: transparent url(/img/clouds2.png) repeat top center;
+  background: transparent url(~/public/img/clouds2.png) repeat top center;
   z-index: 3;
   width: 100%;
   height: 600px;
